@@ -22,11 +22,12 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <span className="modal-close" onClick={onClose}>&times;</span>
                 <div className="modal-header">
-                    <h2>Nâng cấp gói URA-xLaw</h2>
+                    <h2>Nâng cấp gói</h2>
                     <p style={{ color: 'var(--muted)' }}>Chọn gói phù hợp với nhu cầu của bạn để mở khóa các tính năng cao cấp.</p>
                 </div>
                 <div className="plans-container">
                     {/* Plan 1: SOLO */}
+                    
                     <div className={`plan-card ${currentUserPlan === 'SOLO' ? 'current' : ''}`}>
                         {currentUserPlan === 'SOLO' && <span className="current-badge">Gói hiện tại</span>}
                         <h3>SOLO</h3>
