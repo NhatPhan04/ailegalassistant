@@ -367,6 +367,7 @@ body {
   align-self: flex-start;
   background: var(--bg-900);
   border: 1px solid var(--border-color);
+  text-align: left;
 }
 
 .msg.user {

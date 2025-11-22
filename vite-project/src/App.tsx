@@ -29,7 +29,7 @@ function App() {
         {
             id: 'initial-bot-message',
             sender: 'bot',
-            content: `**Xin chào!** Tôi là trợ lý pháp lý URA-xLaw. Tôi có thể giúp bạn tra cứu, so sánh, và tạo checklist tuân thủ từ các văn bản pháp luật ngân hàng.  
+            content: `**Xin chào!** Tôi là trợ lý pháp lý AI Legal Assistant. Tôi có thể giúp bạn tra cứu, so sánh, và tạo checklist tuân thủ từ các văn bản pháp luật ngân hàng.  
   
 Bạn có thể thử các câu hỏi sau hoặc dùng các nút "Tác vụ Nâng cao" ở thanh bên phải:
 
@@ -138,7 +138,7 @@ Bạn có thể thử các câu hỏi sau hoặc dùng các nút "Tác vụ Nân
         const thinkingMessage: Message = { 
             id: botMessageId, 
             sender: 'bot', 
-            content: `<i class="fas fa-spinner fa-spin"></i> URA đang áp dụng các agent (Retriever, Applicability, Citation...) để xử lý...` 
+            content: `<i class="fas fa-spinner fa-spin"></i> AI Legal Assistant đang áp dụng các agent (Retriever, Applicability, Citation...) để xử lý...` 
         };
         setMessages(prev => [...prev, thinkingMessage]);
 

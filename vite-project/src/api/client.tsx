@@ -1,8 +1,12 @@
-import axios from 'axios';
-import type { AxiosInstance } from 'axios';
+// src/api/client.tsx
+import axios, { type AxiosInstance } from 'axios';
+import type { Message } from '../types';
 
-// Central configurable API settings
-let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:9621';
+// ================== CẤU HÌNH CHUNG ==================
+
+let API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
 let apiKey: string | null = null;
 let apiKeyTransport: 'header' | 'query' = 'header';
 let axiosInstance: AxiosInstance | null = null;
@@ -17,17 +21,20 @@ export function configureApi(options: ConfigureOptions) {
   if (options.baseURL) API_BASE_URL = options.baseURL.replace(/\/$/, '');
   if (typeof options.key !== 'undefined') apiKey = options.key;
   if (options.transport) apiKeyTransport = options.transport;
-  axiosInstance = null; // reset so it recreates with new config
+  axiosInstance = null; // reset để tạo instance mới
 }
 
 function getAxios(): AxiosInstance {
   if (!axiosInstance) {
-    axiosInstance = axios.create({ baseURL: API_BASE_URL, timeout: 30000 });
+    axiosInstance = axios.create({
+      baseURL: API_BASE_URL,
+      timeout: 30000,
+    });
   }
   return axiosInstance;
 }
 
-// Helper to build auth placement
+// Áp dụng apiKey nếu có (header hoặc query)
 function applyAuth() {
   const headers: Record<string, string> = {};
   const params: Record<string, string> = {};
@@ -41,32 +48,35 @@ function applyAuth() {
   return { headers, params };
 }
 
-export async function getDocuments() {
-  const { headers, params } = applyAuth();
-  const res = await getAxios().get('/documents', { headers, params });
-  return res.data;
-}
-
-// Optional convenience to set key quickly
 export function setApiKey(key: string, transport: 'header' | 'query' = 'header') {
-  apiKey = key; apiKeyTransport = transport; axiosInstance = null;
+  apiKey = key;
+  apiKeyTransport = transport;
+  axiosInstance = null;
 }
 
-export function setApiBaseUrl(url: string) { configureApi({ baseURL: url }); }
+export function setApiBaseUrl(url: string) {
+  configureApi({ baseURL: url });
+}
 
 export function getApiConfig() {
   return { baseURL: API_BASE_URL, apiKey, apiKeyTransport };
 }
+
+// ================== DOCUMENTS (STUB – cho hợp cấu trúc cũ) ==================
 
 export interface PaginatedDocumentsRequest {
   page: number;
   page_size: number;
   sort_direction?: 'asc' | 'desc';
   sort_field?: string;
-  status_filter?: string; // e.g. processed
+  status_filter?: string;
 }
 
-export interface DocumentSummary { id: string; [key: string]: unknown; }
+export interface DocumentSummary {
+  id: string;
+  [key: string]: unknown;
+}
+
 export interface PaginatedDocumentsResponse {
   documents: DocumentSummary[];
   pagination: {
@@ -80,57 +90,55 @@ export interface PaginatedDocumentsResponse {
   status_counts: Record<string, number>;
 }
 
-export async function getDocumentsPaginated(req: PaginatedDocumentsRequest): Promise<PaginatedDocumentsResponse> {
-  const { headers, params } = applyAuth();
-  const body: PaginatedDocumentsRequest = {
-    page: req.page,
-    page_size: req.page_size,
-    sort_direction: req.sort_direction || 'desc',
-    sort_field: req.sort_field || 'updated_at',
-    status_filter: req.status_filter || 'processed'
+/** Backend mới chưa có /documents → trả rỗng cho UI không bị lỗi */
+export async function getDocuments(): Promise<DocumentSummary[]> {
+  return [];
+}
+
+export async function getDocumentsPaginated(
+  req: PaginatedDocumentsRequest,
+): Promise<PaginatedDocumentsResponse> {
+  return {
+    documents: [],
+    pagination: {
+      page: req.page,
+      page_size: req.page_size,
+      total_count: 0,
+      total_pages: 0,
+      has_next: false,
+      has_prev: false,
+    },
+    status_counts: {},
   };
-  const res = await getAxios().post('/documents/paginated', body, { headers, params });
-  return res.data;
 }
 
-export interface ChatHistoryItem { role: 'user' | 'assistant'; content: string; }
-export interface ChatRequestBody {
-  mode: string;
-  response_type: string;
-  top_k: number;
-  chunk_top_k: number;
-  max_entity_tokens: number;
-  max_relation_tokens: number;
-  max_total_tokens: number;
-  only_need_context: boolean;
-  only_need_prompt: boolean;
-  stream: boolean;
-  history_turns: number;
-  user_prompt: string;
-  enable_rerank: boolean;
-  query: string;
-  conversation_history: ChatHistoryItem[];
+// ================== CHAT HISTORY ==================
+
+export interface ChatHistoryItem {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
-// Utility to build conversation history from existing messages
-import type { Message } from '../types';
+function buildConversationHistory(
+  messages: Message[],
+  maxTurns: number | undefined,
+): ChatHistoryItem[] {
+  const filtered = messages.filter(
+    (m) => !m.content.includes('fa-spinner'),
+  );
 
-function buildConversationHistory(messages: Message[], maxTurns: number | undefined): ChatHistoryItem[] {
-  // Exclude any in-progress spinner / placeholder messages
-  const filtered = messages.filter(m => !m.content.includes('fa-spinner'));
-  // Map to ChatHistoryItem
-  const history: ChatHistoryItem[] = filtered.map(m => ({
+  const history: ChatHistoryItem[] = filtered.map((m) => ({
     role: m.sender === 'user' ? 'user' : 'assistant',
-    content: m.content
+    content: m.content,
   }));
+
   if (!maxTurns || maxTurns <= 0) return history;
-  // A "turn" is a user+assistant pair. We slice from the end.
+
   let turns = 0;
   const result: ChatHistoryItem[] = [];
   for (let i = history.length - 1; i >= 0; i--) {
     result.unshift(history[i]);
     if (history[i].role === 'user') {
-      // Count turns when we encounter a user (assuming pattern user->assistant)
       turns++;
       if (turns >= maxTurns) break;
     }
@@ -138,155 +146,157 @@ function buildConversationHistory(messages: Message[], maxTurns: number | undefi
   return result;
 }
 
+// ================== BACKEND LEGAL (FASTAPI) ==================
+
+export interface UploadResponse {
+  file_path: string;
+  message: string;
+}
+
+/** Gọi /upload để upload hợp đồng DOCX */
+export async function uploadContractToLegalBE(
+  file: File,
+): Promise<UploadResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const { headers, params } = applyAuth();
+
+  const res = await getAxios().post('/upload', formData, {
+    headers,
+    params,
+  });
+
+  return res.data as UploadResponse;
+}
+
+export interface LegalChatRequest {
+  query: string;
+  file_path?: string | null;
+  history?: ChatHistoryItem[];
+}
+
+/** Gọi /chat – backend trả về text/plain (markdown) */
+export async function legalChatOnce(req: LegalChatRequest): Promise<string> {
+  const { headers, params } = applyAuth();
+
+  const res = await getAxios().post('/chat', req, {
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+      Accept: 'text/plain',
+    },
+    params,
+    responseType: 'text',
+  });
+
+  return res.data as string;
+}
+
+// ================== STREAM API GIẢ LẬP (cho ChatWindow) ==================
+
 export interface StreamChatParams {
   query: string;
   messages: Message[];
-  historyTurns?: number; // number of previous user turns to include; 0 = none; undefined = all
-  overrides?: Partial<Omit<ChatRequestBody, 'query' | 'conversation_history' | 'history_turns' | 'stream'>>;
+  historyTurns?: number;
+  overrides?: {
+    file_path?: string | null;
+  };
   onToken: (delta: string) => void;
   signal?: AbortSignal;
   onError?: (err: unknown) => void;
   onComplete?: () => void;
 }
 
-export async function streamChatQuery(params: StreamChatParams): Promise<void> {
-  const { query, messages, historyTurns, overrides, onToken, signal, onError, onComplete } = params;
-  const conversation_history = buildConversationHistory(messages, historyTurns === undefined ? undefined : historyTurns);
-  const body: ChatRequestBody = {
-    mode: 'global',
-    response_type: 'Multiple Paragraphs',
-    top_k: 40,
-    chunk_top_k: 20,
-    max_entity_tokens: 6000,
-    max_relation_tokens: 8000,
-    max_total_tokens: 30000,
-    only_need_context: false,
-    only_need_prompt: false,
-    stream: true,
-    history_turns: historyTurns ?? conversation_history.filter(h => h.role === 'user').length,
-    user_prompt: '',
-    enable_rerank: true,
+/** Giả stream: gọi /chat một lần, onToken nhận full text */
+export async function streamChatQuery(
+  params: StreamChatParams,
+): Promise<void> {
+  const {
     query,
-    conversation_history,
-    ...overrides,
-  } as ChatRequestBody;
+    messages,
+    historyTurns,
+    overrides,
+    onToken,
+    signal,
+    onError,
+    onComplete,
+  } = params;
 
-  // Build URL with query param auth if needed
-  let url = API_BASE_URL.replace(/\/$/, '') + '/query/stream';
-  const { headers, params: queryParams } = applyAuth();
-  if (Object.keys(queryParams).length) {
-    const usp = new URLSearchParams(queryParams);
-    url += (url.includes('?') ? '&' : '?') + usp.toString();
-  }
+  const conversation_history = buildConversationHistory(
+    messages,
+    historyTurns === undefined ? undefined : historyTurns,
+  );
 
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', accept: 'application/json', ...headers },
-      body: JSON.stringify(body),
-      signal
+    const payload: LegalChatRequest = {
+      query,
+      file_path: overrides?.file_path ?? null,
+      history: conversation_history,
+    };
+
+    const { headers, params: qs } = applyAuth();
+
+    const res = await getAxios().post('/chat', payload, {
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+      },
+      params: qs,
+      responseType: 'text',
+      signal,
     });
-    if (!res.body) {
-      if (onError) onError(new Error('No response body for stream'));
-      return;
-    }
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n').filter(l => l.trim() !== '');
-      for (const line of lines) {
-        try {
-          const json = JSON.parse(line);
-          if (json.response) onToken(json.response);
-        } catch {
-          // ignore malformed line
-        }
-      }
-    }
+
+    const text = res.data as string;
+    onToken(text);
     if (onComplete) onComplete();
   } catch (err) {
     if (onError) onError(err);
   }
 }
 
-// New helper: retrieve context (only_need_context=true) expecting a single JSON object with 'response' field.
-import type { Message as ChatMsg } from '../types';
+// ================== retrieveContextOnce đơn giản ==================
+
 export interface RetrieveContextParams {
   query: string;
-  messages: ChatMsg[];
+  messages: Message[];
   historyTurns?: number;
   signal?: AbortSignal;
   onResult: (content: string) => void;
   onError?: (err: unknown) => void;
 }
-export async function retrieveContextOnce(params: RetrieveContextParams): Promise<void> {
+
+export async function retrieveContextOnce(
+  params: RetrieveContextParams,
+): Promise<void> {
   const { query, messages, historyTurns, signal, onResult, onError } = params;
+  const conversation_history = buildConversationHistory(
+    messages,
+    historyTurns === undefined ? undefined : historyTurns,
+  );
+
   try {
-    const conversation_history = buildConversationHistory(messages, historyTurns === undefined ? undefined : historyTurns);
-    const body: ChatRequestBody = {
-      mode: 'global',
-      response_type: 'Multiple Paragraphs',
-      top_k: 40,
-      chunk_top_k: 20,
-      max_entity_tokens: 6000,
-      max_relation_tokens: 8000,
-      max_total_tokens: 30000,
-      only_need_context: true,
-      only_need_prompt: false,
-      stream: true, // backend still uses stream endpoint but will likely send one JSON line
-      history_turns: historyTurns ?? conversation_history.filter(h => h.role === 'user').length,
-      user_prompt: '',
-      enable_rerank: true,
+    const payload: LegalChatRequest = {
       query,
-      conversation_history
+      history: conversation_history,
     };
 
-    let url = API_BASE_URL.replace(/\/$/, '') + '/query/stream';
-    const { headers, params: queryParams } = applyAuth();
-    if (Object.keys(queryParams).length) {
-      const usp = new URLSearchParams(queryParams);
-      url += (url.includes('?') ? '&' : '?') + usp.toString();
-    }
+    const { headers, params: qs } = applyAuth();
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', accept: 'application/json', ...headers },
-      body: JSON.stringify(body),
-      signal
+    const res = await getAxios().post('/chat', payload, {
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+      },
+      params: qs,
+      responseType: 'text',
+      signal,
     });
-    if (!res.body) throw new Error('No response body');
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let text = '';
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      text += decoder.decode(value, { stream: true });
-    }
-    // Split by newlines, parse each candidate line for JSON with 'response'
-    let aggregated = '';
-    for (const line of text.split('\n')) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      const jsonStr = trimmed.startsWith('data:') ? trimmed.replace(/^data:\s*/, '') : trimmed;
-      if (jsonStr === '[DONE]') continue;
-      try {
-        const parsed = JSON.parse(jsonStr);
-        if (parsed && typeof parsed.response === 'string') {
-          aggregated += parsed.response; // accumulate if multiple
-        }
-      } catch {
-        // ignore non-JSON lines
-      }
-    }
-    if (!aggregated) {
-      // fallback: return raw full text
-      aggregated = text;
-    }
-    onResult(aggregated);
+
+    const text = res.data as string;
+    onResult(text);
   } catch (err) {
     if (onError) onError(err);
   }
