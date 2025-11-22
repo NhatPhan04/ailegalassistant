@@ -8,7 +8,7 @@
   --accent-2: #7dd3fc;
   --glass: rgba(255, 255, 255, 0.03);
   --radius: 12px;
-  --maxw: 1200px;
+  --maxw: 2000px;
   --shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
   --border-color: rgba(255, 255, 255, 0.04);
   --success: #6ee7b7;
@@ -44,6 +44,11 @@ body,
 }
 
 body {
+  padding: 10px;
+  /* Chỉ cách lề 10px như yêu cầu */
+  height: 100vh;
+  /* Chiều cao bằng 100% màn hình */
+  width: 100vw;
   margin: 0;
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   background: var(--bg-900);
@@ -55,6 +60,7 @@ body {
   align-items: center;
   padding: 28px;
   transition: background 0.3s ease, color 0.3s ease;
+
 }
 
 #root {
@@ -78,49 +84,7 @@ body {
   display: flex;
 }
 
-/* LOGIN SCREEN */
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  background: var(--bg-800);
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-  text-align: center;
-}
 
-.login-logo {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  color: #fff;
-  font-size: 24px;
-  margin: 0 auto 20px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-}
-
-.login-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.login-subtitle {
-  color: var(--muted);
-  margin-bottom: 32px;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 
 .form-group {
   text-align: left;
@@ -149,23 +113,6 @@ body {
   box-shadow: 0 0 0 2px rgba(110, 231, 183, 0.1);
 }
 
-.login-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  color: #fff;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  margin-top: 8px;
-}
-
-.login-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
 
 .app {
   width: 100%;
@@ -192,7 +139,7 @@ body {
 
 /* LEFT SIDEBAR */
 .sidebar {
-  padding: 20px;
+  padding: 5px;
   background: linear-gradient(180deg, var(--glass), transparent);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -1255,4 +1202,322 @@ body {
   .detail-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ================================
+   FORMAT MESSAGE CHUẨN CHATGPT
+   ================================ */
+
+/* Vùng chứa tin nhắn */
+.messages {
+  padding: 24px;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  color: #1e1e1e;
+  line-height: 1.65;
+  overflow-y: auto;
+}
+
+/* Khối tin nhắn */
+.msg {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin: 14px 0;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* User message */
+/* User message - SỬA LẠI MÀU XANH CHO NỔI BẬT */
+.msg.user {
+  /* Nền màu xanh hiện đại (Gradient) */
+  background: linear-gradient(135deg, #9dce47, #2563eb) !important;
+
+  /* Chữ màu trắng */
+  color: #ffffff !important;
+
+  /* Bo góc đẹp hơn: Góc trên bên phải nhọn để chỉ hướng người nói */
+  border-radius: 12px 12px 2px 12px !important;
+
+  /* Căn sang phải */
+  align-self: flex-end !important;
+  margin-left: auto !important;
+  /* Đẩy sang phải */
+
+  /* Xóa viền xám nếu có */
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* Đảm bảo tất cả chữ bên trong tin nhắn User đều màu trắng */
+.msg.user p,
+.msg.user strong,
+.msg.user li,
+.msg.user h1,
+.msg.user h2,
+.msg.user h3 {
+  color: #ffffff !important;
+}
+
+/* Bot message */
+/* =======================================================
+   FORMAT TIN NHẮN BOT - CĂN TRÁI (LEFT ALIGN)
+   ======================================================= */
+
+.msg.bot {
+  /* Màu sắc & Khung */
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  color: #1f2937 !important;
+
+  /* Căn chỉnh khung */
+  align-self: flex-start !important;
+  margin-right: auto !important;
+  border-radius: 12px 12px 12px 2px !important;
+
+  /* Padding & Font */
+  padding: 20px 24px !important;
+  max-width: 90% !important;
+  font-family: "Inter", "Segoe UI", sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+
+  /* QUAN TRỌNG: Căn trái toàn bộ container */
+  text-align: left !important;
+}
+
+/* 1. VĂN BẢN & TIÊU ĐỀ -> CĂN TRÁI HẾT */
+.msg.bot p,
+.msg.bot h1,
+.msg.bot h2,
+.msg.bot h3,
+.msg.bot div {
+  text-align: left !important;
+  margin-bottom: 12px !important;
+}
+
+/* 2. Style lại tiêu đề cho nổi bật (dù căn trái) */
+.msg.bot h1 {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+  margin-top: 16px !important;
+  color: #111827 !important;
+}
+
+.msg.bot h2,
+.msg.bot h3 {
+  font-weight: 600 !important;
+  color: #374151 !important;
+  margin-top: 16px !important;
+}
+
+/* 3. DANH SÁCH */
+.msg.bot ul,
+.msg.bot ol {
+  text-align: left !important;
+  padding-left: 24px !important;
+  margin: 10px 0 !important;
+}
+
+/* 4. TRÍCH DẪN */
+.msg.bot blockquote {
+  text-align: left !important;
+  border-left: 4px solid #3b82f6;
+  /* Viền xanh dương */
+  background: #eff6ff;
+  /* Nền xanh nhạt */
+  padding: 12px 16px !important;
+  margin: 16px 0 !important;
+  color: #1e40af;
+  font-style: normal !important;
+  /* Bỏ in nghiêng cho dễ đọc */
+  border-radius: 4px;
+}
+
+/* 5. BẢNG BIỂU */
+.msg.bot th,
+.msg.bot td {
+  text-align: left !important;
+  /* Nội dung bảng cũng căn trái */
+  border: 1px solid #d1d5db;
+  padding: 10px;
+}
+
+.msg.bot th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+/* ======== Tối ưu hiển thị markdown ======== */
+
+.msg p {
+  margin: 10px 0;
+  font-size: 15.5px;
+}
+
+/* Header giống ChatGPT */
+.msg h1,
+.msg h2,
+.msg h3 {
+  font-weight: 600;
+  margin-top: 18px;
+  margin-bottom: 12px;
+}
+
+.msg h1 {
+  font-size: 1.45rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}
+
+.msg h2 {
+  font-size: 1.3rem;
+}
+
+.msg h3 {
+  font-size: 1.15rem;
+}
+
+/* Danh sách */
+.msg ul,
+.msg ol {
+  margin: 10px 0 10px 22px;
+  padding-left: 20px;
+}
+
+.msg li {
+  margin: 6px 0;
+}
+
+/* Blockquote */
+.msg blockquote {
+  border-left: 4px solid #d0d0d0;
+  background: #fafafa;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 14px 0;
+  color: #555;
+}
+
+/* Code block */
+.msg pre {
+  background: #2476c8;
+  border: 1px solid #e1e1e1;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+/* Inline code */
+.msg code {
+  background: #f0f0f0;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Nút xem tiến trình suy luận */
+.choose-plan-btn {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.choose-plan-btn:hover {
+  background: #e5e5e5;
+}
+
+/* Thông báo nhỏ */
+.msg .reasoning-note {
+  font-size: 11.5px;
+  color: #777;
+  margin-top: 6px;
+}
+
+/* === RESET STYLE MẶC ĐỊNH CỦA .msg CHO CHUẨN CHATGPT === */
+
+.msg {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif !important;
+  font-size: 15.5px !important;
+  line-height: 1.65 !important;
+  letter-spacing: 0 !important;
+  word-break: break-word;
+}
+
+/* Đảm bảo markdown hiển thị đúng spacing */
+.msg p {
+  margin: 12px 0 !important;
+}
+
+.msg strong {
+  font-weight: 600;
+}
+
+/* HEADINGS */
+.msg h1,
+.msg h2,
+.msg h3 {
+  font-weight: 600 !important;
+  margin-top: 22px !important;
+  margin-bottom: 14px !important;
+}
+
+.msg h1 {
+  font-size: 1.45rem !important;
+  text-align: center;
+}
+
+.msg h2 {
+  font-size: 1.3rem !important;
+}
+
+.msg h3 {
+  font-size: 1.15rem !important;
+}
+
+/* LISTS */
+.msg ul,
+.msg ol {
+  margin: 10px 0 10px 28px !important;
+}
+
+.msg li {
+  margin: 6px 0 !important;
+}
+
+/* BLOCKQUOTE */
+.msg blockquote {
+  border-left: 4px solid #703737;
+  padding-left: 14px;
+  background: #fafafa;
+  color: #555;
+  margin: 16px 0;
+}
+
+/* GIỐNG CHATGPT: dòng mở đầu căn giữa */
+.msg>p:first-child {
+  text-align: center !important;
+  font-size: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+/* Căn bullet list sát lề trái – chuẩn văn bản pháp luật */
+.msg ul,
+.msg ol {
+  padding-left: 16px !important;
+  /* giảm thụt lề */
+  margin-left: 0 !important;
+}
+
+.msg li {
+  margin-left: 0 !important;
+  /* không bị đẩy vào thêm */
+  padding-left: 4px !important;
+  text-indent: 0 !important;
 }
