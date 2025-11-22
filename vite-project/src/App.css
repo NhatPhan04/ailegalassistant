@@ -1,0 +1,347 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* --- Upload View Styles --- */
+.upload-view {
+  padding: 30px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.drop-zone {
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  background-color: white;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 30px;
+}
+
+.drop-zone:hover,
+.drop-zone.dragging {
+  border-color: #3498db;
+  background-color: #ebf8ff;
+}
+
+.upload-icon {
+  font-size: 48px;
+  color: #3498db;
+  margin-bottom: 15px;
+}
+
+.drop-zone p {
+  font-size: 16px;
+  color: #4a5568;
+  margin: 0 0 8px 0;
+}
+
+.drop-zone span {
+  color: #3498db;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.drop-zone small {
+  color: #a0aec0;
+}
+
+/* File List Items */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.file-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.file-icon {
+  font-size: 24px;
+  color: #e74c3c;
+  /* Màu đỏ cho PDF */
+  width: 40px;
+  text-align: center;
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #718096;
+}
+
+.progress-bg {
+  height: 6px;
+  background-color: #edf2f7;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #3498db;
+  transition: width 0.2s ease;
+}
+
+.progress-bar.done {
+  background-color: #2ecc71;
+}
+
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.success-icon {
+  color: #2ecc71;
+}
+
+.percent {
+  font-size: 12px;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  color: #e74c3c;
+}
+
+/* --- Documents View Styles --- */
+.documents-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f4f7f6;
+}
+
+.doc-header {
+  background: white;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.doc-body {
+  flex: 1;
+  overflow: hidden;
+  /* Để scroll nằm trong bảng */
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px;
+}
+
+/* Buttons */
+.primary-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.primary-btn:hover {
+  background-color: #2980b9;
+}
+
+.secondary-btn {
+  background-color: white;
+  color: #34495e;
+  border: 1px solid #bdc3c7;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.secondary-btn:hover {
+  background-color: #f8f9fa;
+}
+
+/* Search & Filter */
+.filter-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.search-box .search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #95a5a6;
+}
+
+.filter-btn {
+  background: white;
+  border: 1px solid #bdc3c7;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+/* Table Styles */
+.table-wrapper {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  overflow: auto;
+  flex: 1;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.doc-table th {
+  background-color: #f8f9fa;
+  text-align: left;
+  padding: 15px;
+  font-size: 13px;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.doc-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.doc-table tr:hover {
+  background-color: #fafafa;
+}
+
+.doc-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+/* File Tags */
+.file-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.file-tag.pdf {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.file-tag.doc {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
